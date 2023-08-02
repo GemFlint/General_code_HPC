@@ -1,0 +1,31 @@
+# for loop to zip multiple files 
+#PBS -lwalltime=08:00:00
+#PBS -lselect=1:ncpus=250:mem=900gb
+
+for file in /rds/general/project/diantonio/live/Gem/ChIP/PEO4/PEO4_merged_trimmed_reads/PEO4_trimmed/*.fastq
+do
+gzip "$file"
+done
+
+cp * $PBS_O_WORKDIR
+
+# qdel followed by job id to delete job from queue
+# qsub to submit job
+# qstat to see status of job 
+# vim to create job, must have .pbs at the end 
+# cd to change course diractory 
+# ls to list files in folder 
+# echo to repeat back what you've written 
+# gunzip to unzip a gz file 
+
+# changing file permissions to allow you and others to read write and execute
+chmod -R o+rwx .
+chmod -R u+rwx .
+
+# convert narrowPeak to bed file
+awk 'BEGIN {OFS="\t"} {print $1, $2, $3, $4, $5, $6}' input.narrowPeak > output.bed
+
+# For converting from one genome to another:
+# Either use webpage: https://genome.ucsc.edu/cgi-bin/hgLiftOver
+# Or using command line, use this link to establish downloading tools etc https://crossmap.sourceforge.net/
+CrossMap.py bed hg19ToHg38.over.chain input.bed output.bed
